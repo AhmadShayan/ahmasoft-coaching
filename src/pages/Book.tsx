@@ -186,6 +186,7 @@ export default function BookPage() {
           scheduledAt:     selectedSlot,
           visitorTimezone: selectedTimezone,
           guestEmails:     guestEmails.length > 0 ? guestEmails : undefined,
+          source:          "coaching-website",
         },
       });
       if (error || !data?.success) {
