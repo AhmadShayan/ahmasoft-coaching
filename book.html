@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Book a Fit Call · Ahmad Shayan Coaching</title>
+<meta name="description" content="Book a free 15-minute fit call with Ahmad Shayan. Pick a date and time that works for you." />
+<link rel="icon" href="assets/ahmasoft-icon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Supabase JS (UMD) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<style>
+:root {
+  --navy:       #0F172A;
+  --navy-2:     #111c36;
+  --blue:       #2563EB;
+  --blue-2:     #3b82f6;
+  --purple:     #7C3AED;
+  --near-white: #F8FAFC;
+  --muted:      #475569;
+  --muted-2:    #64748b;
+  --line-dark:  rgba(255,255,255,.08);
+  --green:      #16A34A;
+  --red:        #dc2626;
+  --amber:      #d97706;
+  --serif: "Fraunces", ui-serif, Georgia, serif;
+  --sans:  "Inter", ui-sans-serif, system-ui, sans-serif;
+  --maxw: 860px;
+  --pad-x: clamp(20px, 4vw, 40px);
+}
+
+*,*::before,*::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: var(--sans); background: var(--navy); color: var(--near-white);
+  -webkit-font-smoothing: antialiased; line-height: 1.55; overflow-x: hidden; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+input, textarea, select { font: inherit; }
+h1,h2,h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; margin: 0; }
+
+/* ── Scroll progress ── */
+.scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 70; pointer-events: none; }
+.scroll-progress::after { content: ""; display: block; height: 100%; width: var(--p, 0%);
+  background: linear-gradient(90deg, #2563EB, #7C3AED); box-shadow: 0 0 10px rgba(37,99,235,.6);
+  transition: width .12s linear; }
+
+/* ── Grain ── */
+.grain { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .04; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px; }
+
+/* ── NAV ── */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 16px var(--pad-x);
+  background: rgba(15,23,42,.72); backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%); border-bottom: 1px solid transparent;
+  transition: border-color .25s ease, background .25s ease; }
+.nav.scrolled { border-bottom-color: rgba(255,255,255,.06); background: rgba(15,23,42,.92); }
+.nav-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center;
+  justify-content: space-between; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark { width: 42px; height: 42px; border-radius: 11px;
+  background: radial-gradient(120% 120% at 20% 0%, rgba(255,255,255,.08), transparent 55%), linear-gradient(135deg, #0b1530, #16224a);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.10) inset, 0 0 18px -2px rgba(37,99,235,.45);
+  display: grid; place-items: center; overflow: hidden;
+  transition: transform .35s ease, box-shadow .35s ease; }
+.brand:hover .brand-mark { transform: translateY(-1px) rotate(-3deg);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.16) inset, 0 0 32px -2px rgba(37,99,235,.8); }
+.brand-mark img { width: 30px; height: 30px; object-fit: contain;
+  filter: drop-shadow(0 1px 4px rgba(37,99,235,.45)); transition: transform .35s ease; }
+.brand:hover .brand-mark img { transform: scale(1.08); }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name { font-family: var(--serif); font-weight: 500; font-size: 18px; letter-spacing: -0.01em; color: #fff; }
+.brand-sub { font-size: 11.5px; color: rgba(248,250,252,.55); letter-spacing: .04em; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px;
+  border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: transparent;
+  color: rgba(248,250,252,.7); font-size: 14px; font-weight: 500; transition: all .2s ease; }
+.back-btn:hover { border-color: rgba(255,255,255,.3); color: #fff; transform: translateX(-2px); }
+.back-btn svg { width: 14px; height: 14px; }
+
+/* ── PAGE HEADER ── */
+.page-header { padding: clamp(96px, 13vh, 140px) var(--pad-x) clamp(32px, 4vw, 48px);
+  text-align: center; position: relative; overflow: hidden; }
+.page-header::before { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(50% 60% at 50% 40%, rgba(37,99,235,.14), transparent 70%);
+  pointer-events: none; }
+.page-header-inner { position: relative; z-index: 1; }
+.eyebrow { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--blue); padding: 7px 12px;
+  border: 1px solid rgba(37,99,235,.28); border-radius: 999px; background: rgba(37,99,235,.08); }
+.page-header h1 { font-size: clamp(32px, 4.5vw, 52px); margin: 16px 0 14px; }
+.page-header p { color: rgba(248,250,252,.65); font-size: 17px; margin: 0 auto 32px; max-width: 500px; }
+
+/* ── Timezone selector ── */
+.tz-wrapper { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.tz-label { font-size: 13px; color: rgba(248,250,252,.5); display: flex; align-items: center; gap: 6px; }
+.tz-label svg { width: 14px; height: 14px; }
+.tz-select-wrap { position: relative; }
+.tz-select-wrap .pulse-ring { position: absolute; inset: -4px; border-radius: 999px;
+  border: 1.5px solid rgba(37,99,235,.5); animation: pingRing 1.5s cubic-bezier(0,0,.2,1) infinite; }
+@keyframes pingRing { 0% { transform: scale(.95); opacity: .8; } 100% { transform: scale(1.15); opacity: 0; } }
+.tz-select { appearance: none; background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.4);
+  color: var(--near-white); padding: 7px 28px 7px 12px; border-radius: 999px; font-size: 13px;
+  font-family: var(--sans); cursor: pointer; outline: none; transition: border-color .2s ease;
+  max-width: 260px; }
+.tz-select:focus { border-color: rgba(37,99,235,.8); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+.tz-select option { background: #0F172A; color: #F8FAFC; }
+.tz-select-arrow { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;
+  color: rgba(248,250,252,.5); width: 14px; height: 14px; }
+.tz-nudge { font-size: 12px; color: rgba(217,119,6,.9); display: flex; align-items: center; gap: 5px;
+  justify-content: center; margin-top: 6px; }
+.tz-nudge-dot { width: 5px; height: 5px; border-radius: 999px; background: #d97706; }
+
+/* ── MAIN BOOKING AREA ── */
+.booking-wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad-x) 80px; }
+
+/* ── Step indicator ── */
+.steps { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0 0 32px; }
+.step-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.step-circle { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  border: 2px solid rgba(255,255,255,.15); color: rgba(255,255,255,.4); font-size: 14px; font-weight: 600;
+  transition: all .3s ease; }
+.step-circle.active { border-color: var(--blue); color: var(--blue); background: rgba(37,99,235,.1);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.1); }
+.step-circle.done { border-color: var(--green); background: var(--green); color: #fff; }
+.step-circle.done svg { width: 16px; height: 16px; }
+.step-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); transition: color .3s ease; }
+.step-label.active { color: var(--blue); }
+.step-label.done { color: rgba(22,163,74,.8); }
+.step-connector { width: clamp(40px, 8vw, 80px); height: 2px; background: rgba(255,255,255,.1);
+  border-radius: 999px; margin-bottom: 18px; transition: background .3s ease; }
+.step-connector.done { background: rgba(22,163,74,.5); }
+
+/* ── Booking card ── */
+.booking-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px; padding: clamp(24px, 4vw, 44px); overflow: hidden;
+  box-shadow: 0 20px 60px -30px rgba(0,0,0,.5); }
+
+/* ── Back row ── */
+.step-back { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.step-back-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,.12); background: transparent; color: rgba(255,255,255,.6);
+  transition: all .2s ease; flex-shrink: 0; }
+.step-back-btn:hover { border-color: rgba(255,255,255,.3); color: #fff; }
+.step-back-btn svg { width: 16px; height: 16px; }
+.step-heading { font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); font-weight: 500; color: #fff; }
+.step-sub { font-size: 14px; color: rgba(255,255,255,.5); margin-top: 2px; }
+
+/* ── CALENDAR ── */
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.cal-month { font-family: var(--serif); font-size: 22px; font-weight: 500; color: #fff; }
+.cal-nav-btn { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.7); display: grid; place-items: center;
+  transition: all .2s ease; }
+.cal-nav-btn:hover { background: rgba(37,99,235,.15); border-color: rgba(37,99,235,.4); color: #fff; }
+.cal-nav-btn svg { width: 16px; height: 16px; }
+.cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
+.cal-dow-cell { text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: rgba(255,255,255,.35); padding: 4px 0; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid transparent;
+  transition: background .15s ease, border-color .15s ease, color .15s ease; color: rgba(255,255,255,.8); }
+.cal-day.empty { visibility: hidden; pointer-events: none; }
+.cal-day.disabled { color: rgba(255,255,255,.2); cursor: not-allowed; }
+.cal-day.disabled:hover { background: transparent; }
+.cal-day.today { border-color: rgba(37,99,235,.5); color: var(--blue); }
+.cal-day.selected { background: var(--blue); color: #fff; border-color: var(--blue);
+  box-shadow: 0 4px 16px -4px rgba(37,99,235,.6); }
+.cal-day:not(.disabled):not(.selected):hover { background: rgba(37,99,235,.18); border-color: rgba(37,99,235,.3); }
+.cal-hours-note { margin-top: 18px; padding: 12px 16px; background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06); border-radius: 10px; font-size: 13px;
+  color: rgba(255,255,255,.5); display: flex; align-items: center; gap: 8px; }
+.cal-hours-note svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--blue); }
+
+/* ── SLOTS ── */
+.slots-date { font-family: var(--serif); font-size: 20px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+.slots-sub { font-size: 13px; color: rgba(255,255,255,.45); margin-bottom: 24px; }
+.slots-loading { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 48px;
+  color: rgba(255,255,255,.5); font-size: 15px; }
+.spinner { width: 20px; height: 20px; border: 2px solid rgba(37,99,235,.3); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.slots-empty { text-align: center; padding: 48px 24px; }
+.slots-empty svg { width: 40px; height: 40px; color: rgba(255,255,255,.2); margin: 0 auto 16px; }
+.slots-empty p { color: rgba(255,255,255,.5); font-size: 15px; margin: 0 0 6px; }
+.slots-empty small { color: rgba(255,255,255,.3); font-size: 13px; }
+.slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.slot-btn { padding: 12px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.03); color: rgba(255,255,255,.8); font-size: 14px; font-weight: 500;
+  text-align: center; transition: all .2s ease; }
+.slot-btn:hover { border-color: rgba(37,99,235,.5); background: rgba(37,99,235,.12); color: #fff;
+  box-shadow: 0 4px 16px -8px rgba(37,99,235,.4); transform: translateY(-1px); }
+.slot-btn.selected { border-color: var(--blue); background: rgba(37,99,235,.2); color: var(--blue); }
+@media (max-width: 500px) { .slots-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── FORM ── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.form-group:last-of-type { margin-bottom: 0; }
+.form-label { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.65);
+  display: flex; align-items: center; gap: 6px; }
+.form-label-opt { font-weight: 400; color: rgba(255,255,255,.35); font-size: 12px; }
+.form-label svg { width: 13px; height: 13px; color: var(--blue); }
+.form-hint { font-size: 12px; color: rgba(255,255,255,.3); margin-top: -4px; }
+.form-input { width: 100%; padding: 12px 16px; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 10px; color: #F8FAFC; font-size: 15px;
+  outline: none; transition: border-color .2s ease, box-shadow .2s ease; }
+.form-input:focus { border-color: rgba(37,99,235,.6); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.form-input::placeholder { color: rgba(255,255,255,.28); }
+.form-input.error { border-color: rgba(220,38,38,.6); }
+.form-error { font-size: 12px; color: #f87171; display: flex; align-items: center; gap: 5px; }
+.form-error svg { width: 12px; height: 12px; flex-shrink: 0; }
+textarea.form-input { resize: none; }
+
+/* Guest section */
+.guest-row { display: flex; gap: 10px; }
+.guest-row .form-input { flex: 1; }
+.guest-add-btn { padding: 12px 18px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
+  background: transparent; color: rgba(255,255,255,.7); font-size: 14px; font-weight: 500;
+  white-space: nowrap; transition: all .2s ease; flex-shrink: 0; }
+.guest-add-btn:hover { border-color: rgba(37,99,235,.5); color: var(--blue); }
+.guest-add-btn:disabled { opacity: .4; cursor: not-allowed; }
+.guest-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.guest-chip { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+  background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.25); color: var(--blue); font-size: 13px; }
+.guest-chip-remove { display: flex; align-items: center; cursor: pointer; color: rgba(37,99,235,.6);
+  border: none; background: none; padding: 0; transition: color .2s ease; }
+.guest-chip-remove:hover { color: #ef4444; }
+.guest-chip-remove svg { width: 12px; height: 12px; }
+
+/* Zoom note */
+.zoom-note { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+  background: rgba(37,99,235,.06); border: 1px solid rgba(37,99,235,.18); border-radius: 12px;
+  font-size: 14px; color: rgba(255,255,255,.6); margin-top: 20px; margin-bottom: 24px; }
+.zoom-note svg { width: 16px; height: 16px; color: var(--blue); flex-shrink: 0; margin-top: 1px; }
+
+/* Submit button */
+.submit-btn { width: 100%; padding: 17px 24px; border-radius: 999px; border: none;
+  background: var(--blue); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 8px 24px -10px rgba(37,99,235,.65);
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); background: #1d57db;
+  box-shadow: 0 16px 36px -12px rgba(37,99,235,.75); }
+.submit-btn:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+.submit-btn svg { width: 18px; height: 18px; }
+
+/* ── CONFIRMATION ── */
+.confirm-inner { text-align: center; padding: clamp(16px, 4vw, 32px) 0; }
+.confirm-icon { width: 80px; height: 80px; border-radius: 50%; background: rgba(22,163,74,.12);
+  border: 2px solid rgba(22,163,74,.35); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 28px; animation: confirmBounce .5s cubic-bezier(.2,.6,.2,1); }
+@keyframes confirmBounce { 0% { transform: scale(.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.confirm-icon svg { width: 40px; height: 40px; color: var(--green); }
+.confirm-title { font-family: var(--serif); font-size: clamp(26px, 3.5vw, 36px); font-weight: 500;
+  color: #fff; margin-bottom: 10px; }
+.confirm-msg { color: rgba(255,255,255,.6); font-size: 16px; max-width: 420px; margin: 0 auto 8px; }
+.confirm-guests { font-size: 14px; color: rgba(255,255,255,.5); margin-bottom: 28px; }
+.confirm-detail { display: inline-block; background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.22);
+  border-radius: 14px; padding: 18px 28px; text-align: left; margin-bottom: 28px; }
+.confirm-detail-row { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.confirm-detail-row + .confirm-detail-row { margin-top: 10px; }
+.confirm-detail-row svg { width: 16px; height: 16px; color: var(--blue); flex-shrink: 0; }
+.confirm-detail-row strong { color: #fff; }
+.confirm-detail-row span { color: rgba(255,255,255,.6); font-size: 13.5px; }
+.confirm-reschedule { color: rgba(255,255,255,.45); font-size: 14px; margin-bottom: 28px; }
+.btn-outline { padding: 13px 28px; border-radius: 999px; border: 1px solid rgba(255,255,255,.15);
+  background: transparent; color: rgba(255,255,255,.7); font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: all .2s ease; }
+.btn-outline:hover { border-color: rgba(255,255,255,.3); color: #fff; }
+
+/* ── Trust badges ── */
+.trust-badges { display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 20px; margin-top: 24px; }
+.trust-badge { display: flex; align-items: center; gap: 7px; font-size: 13px; color: rgba(255,255,255,.45); }
+.trust-badge svg { width: 13px; height: 13px; color: var(--green); }
+
+/* ── FOOTER ── */
+footer { padding: 32px var(--pad-x) 44px; border-top: 1px solid rgba(255,255,255,.06);
+  text-align: center; color: rgba(255,255,255,.45); font-size: 13px; line-height: 1.8; }
+footer a { color: rgba(255,255,255,.6); transition: color .2s ease; }
+footer a:hover { color: #fff; }
+.footer-social { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+.footer-social a { display: inline-flex; align-items: center; gap: 7px; color: rgba(255,255,255,.45);
+  font-size: 13px; font-weight: 500; transition: color .2s ease, transform .2s ease; }
+.footer-social a:hover { color: #fff; transform: translateY(-1px); }
+.footer-social svg { width: 14px; height: 14px; }
+
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  .booking-card { padding: 24px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="Back to home">
+      <span class="brand-mark"><img src="assets/ahmasoft-icon.png" alt="Ahmasoft" /></span>
+      <span class="brand-text">
+        <span class="brand-name">Ahmad Shayan</span>
+        <span class="brand-sub">Claude Code Coaching</span>
+      </span>
+    </a>
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+      Back to home
+    </a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="page-header-inner">
+    <span class="eyebrow">15-min fit call</span>
+    <h1>Book a call with Ahmad</h1>
+    <p>No commitment. We'll figure out if it's a fit and what to build first.</p>
+
+    <!-- Timezone selector -->
+    <div class="tz-wrapper">
+      <span class="tz-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Times shown in:
+      </span>
+      <div class="tz-select-wrap">
+        <div class="pulse-ring" id="tzPulse"></div>
+        <select class="tz-select" id="tzSelect" aria-label="Select your timezone"></select>
+        <svg class="tz-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="tz-nudge" id="tzNudge">
+      <span class="tz-nudge-dot"></span>
+      Please confirm your timezone before selecting a date
+    </div>
+  </div>
+</header>
+
+<!-- BOOKING AREA -->
+<main class="booking-wrap">
+
+  <!-- Step indicator -->
+  <div class="steps" id="stepIndicator" aria-hidden="true">
+    <div class="step-item">
+      <div class="step-circle active" id="sc1">1</div>
+      <span class="step-label active" id="sl1">Date</span>
+    </div>
+    <div class="step-connector" id="conn1"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc2">2</div>
+      <span class="step-label" id="sl2">Time</span>
+    </div>
+    <div class="step-connector" id="conn2"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc3">3</div>
+      <span class="step-label" id="sl3">Details</span>
+    </div>
+  </div>
+
+  <!-- Booking card -->
+  <div class="booking-card">
+
+    <!-- STEP 1 — Date picker -->
+    <div id="step1">
+      <div class="step-heading" style="margin-bottom:24px;">Choose a date</div>
+      <div class="cal-header">
+        <span class="cal-month" id="calMonthLabel"></span>
+        <div style="display:flex;gap:8px;">
+          <button class="cal-nav-btn" id="calPrev" aria-label="Previous month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="cal-nav-btn" id="calNext" aria-label="Next month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="cal-dow" id="calDow"></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-hours-note" id="calHoursNote">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="calHoursText">Loading hours...</span>
+      </div>
+    </div>
+
+    <!-- STEP 2 — Time slot picker -->
+    <div id="step2" hidden>
+      <div class="step-back">
+        <button class="step-back-btn" id="backTo1" aria-label="Back to date">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div>
+          <div class="step-heading" id="slotDateLabel">Pick a time</div>
+          <div class="step-sub">Select a 30-minute slot</div>
+        </div>
+      </div>
+      <div id="slotsContainer"></div>
+    </div>
+
+    <!-- STEP 3 — Contact form -->
+    <div id="step3" hidden>
+      <div class="step-back">
+        <button class="step-back-btn" id="backTo2" aria-label="Back to time">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div>
+          <div class="step-heading">Your details</div>
+          <div class="step-sub" id="selectedSlotLabel" style="color:var(--blue);"></div>
+        </div>
+      </div>
+
+      <form id="bookingForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="fname">Full Name <span style="color:#ef4444;">*</span></label>
+            <input class="form-input" id="fname" type="text" placeholder="Jane Smith" autocomplete="name" />
+            <span class="form-error" id="err-name" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Name is required.
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="femail">Email Address <span style="color:#ef4444;">*</span></label>
+            <input class="form-input" id="femail" type="email" placeholder="you@company.com" autocomplete="email" />
+            <span class="form-error" id="err-email" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Enter a valid email.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fcompany">Company / Organization <span class="form-label-opt">(optional)</span></label>
+          <input class="form-input" id="fcompany" type="text" placeholder="Acme Corp" autocomplete="organization" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fphone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            WhatsApp / Phone <span class="form-label-opt">(optional)</span>
+          </label>
+          <div class="form-hint">Share your number if you'd like a WhatsApp follow-up after the call.</div>
+          <input class="form-input" id="fphone" type="tel" placeholder="+1 555 000 0000" autocomplete="tel" />
+          <span class="form-error" id="err-phone" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Enter a valid phone number.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fnotes">What do you want to build?</label>
+          <textarea class="form-input" id="fnotes" rows="3" placeholder="Briefly describe what you're hoping to ship with Claude Code..."></textarea>
+        </div>
+
+        <!-- Guest invites -->
+        <div class="form-group">
+          <label class="form-label" for="fguest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            Invite others <span class="form-label-opt">(optional · max 5)</span>
+          </label>
+          <div class="form-hint">Add a co-founder or colleague. They'll get the same calendar invite.</div>
+          <div class="guest-row">
+            <input class="form-input" id="fguest" type="email" placeholder="colleague@company.com" />
+            <button type="button" class="guest-add-btn" id="guestAddBtn">Add</button>
+          </div>
+          <span class="form-error" id="err-guest" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="err-guest-msg">Enter a valid email.</span>
+          </span>
+          <div class="guest-chips" id="guestChips"></div>
+        </div>
+
+        <div class="zoom-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          A meeting link will be sent in your confirmation email. Free, no credit card, no commitment.
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span id="submitLabel">Confirm Booking</span>
+          <svg id="submitArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <div class="spinner" id="submitSpinner" style="display:none;"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- STEP 4 — Confirmation -->
+    <div id="step4" hidden>
+      <div class="confirm-inner">
+        <div class="confirm-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="confirm-title">You're booked!</h2>
+        <p class="confirm-msg">A confirmation has been sent to <strong id="confirmEmail" style="color:#fff;"></strong>. Check your inbox for the meeting link.</p>
+        <p class="confirm-guests" id="confirmGuests" hidden></p>
+        <div class="confirm-detail" id="confirmDetail"></div>
+        <p class="confirm-reschedule">Can't make it? Reply to the confirmation email to reschedule.</p>
+        <button class="btn-outline" id="bookAnotherBtn">Book another call</button>
+      </div>
+    </div>
+
+  </div><!-- /booking-card -->
+
+  <!-- Trust badges (hidden on confirmation) -->
+  <div class="trust-badges" id="trustBadges">
+    <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Free, no credit card</span>
+    <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>15 minutes</span>
+    <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cancel anytime</span>
+    <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Instant confirmation</span>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-social">
+    <a href="https://ahmadshayan.com" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      ahmadshayan.com
+    </a>
+    <a href="https://ahmasoft.com" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      ahmasoft.com
+    </a>
+    <a href="https://www.linkedin.com/in/ehmadshayan" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </a>
+  </div>
+  <div>Ahmad Shayan &nbsp;·&nbsp; Ahmasoft &nbsp;·&nbsp; Claude Code Coaching</div>
+  <div class="copy" style="color:rgba(255,255,255,.3);margin-top:4px;">&copy; 2026 Ahmasoft</div>
+</footer>
+
+<script>
+// ── Supabase init ──────────────────────────────────────────────────────────
+const { createClient } = window.supabase;
+const sb = createClient(
+  'https://bcufjombzhuotcmvqxzc.supabase.co',
+  'sb_publishable_oXalSfSd5ipMohAf30Oknw_hwDAz_sE'
+);
+
+// ── State ──────────────────────────────────────────────────────────────────
+let currentStep = 1;
+let selectedDate = null;   // Date object
+let selectedSlot = null;   // UTC ISO string
+let slots        = [];
+let guestEmails  = [];
+let tzVerified   = false;
+
+// ── Timezone list ──────────────────────────────────────────────────────────
+const TIMEZONES = [
+  { v: "Pacific/Honolulu",               l: "Hawaii (HST, GMT-10)" },
+  { v: "America/Anchorage",              l: "Alaska (AKST, GMT-9)" },
+  { v: "America/Los_Angeles",            l: "Pacific (PT, GMT-8/-7)" },
+  { v: "America/Denver",                 l: "Mountain (MT, GMT-7/-6)" },
+  { v: "America/Chicago",                l: "Central (CT, GMT-6/-5)" },
+  { v: "America/New_York",               l: "Eastern (ET, GMT-5/-4)" },
+  { v: "America/Sao_Paulo",              l: "Brazil (BRT, GMT-3)" },
+  { v: "America/Argentina/Buenos_Aires", l: "Argentina (ART, GMT-3)" },
+  { v: "UTC",                            l: "UTC (GMT+0)" },
+  { v: "Europe/London",                  l: "London (GMT/BST)" },
+  { v: "Europe/Paris",                   l: "Central Europe (CET, GMT+1/+2)" },
+  { v: "Europe/Amsterdam",               l: "Netherlands (CET, GMT+1/+2)" },
+  { v: "Europe/Berlin",                  l: "Germany (CET, GMT+1/+2)" },
+  { v: "Europe/Istanbul",                l: "Turkey (TRT, GMT+3)" },
+  { v: "Europe/Moscow",                  l: "Moscow (MSK, GMT+3)" },
+  { v: "Africa/Cairo",                   l: "Cairo (EET, GMT+2)" },
+  { v: "Africa/Johannesburg",            l: "South Africa (SAST, GMT+2)" },
+  { v: "Asia/Riyadh",                    l: "Saudi Arabia (AST, GMT+3)" },
+  { v: "Asia/Dubai",                     l: "Dubai (GST, GMT+4)" },
+  { v: "Asia/Karachi",                   l: "Pakistan (PKT, GMT+5)" },
+  { v: "Asia/Kolkata",                   l: "India (IST, GMT+5:30)" },
+  { v: "Asia/Dhaka",                     l: "Bangladesh (BST, GMT+6)" },
+  { v: "Asia/Bangkok",                   l: "Bangkok (ICT, GMT+7)" },
+  { v: "Asia/Singapore",                 l: "Singapore (SGT, GMT+8)" },
+  { v: "Asia/Shanghai",                  l: "China (CST, GMT+8)" },
+  { v: "Asia/Tokyo",                     l: "Japan (JST, GMT+9)" },
+  { v: "Asia/Seoul",                     l: "South Korea (KST, GMT+9)" },
+  { v: "Australia/Sydney",               l: "Sydney (AEST, GMT+10/+11)" },
+  { v: "Pacific/Auckland",               l: "New Zealand (NZST, GMT+12/+13)" },
+];
+
+// ── Get / set timezone ─────────────────────────────────────────────────────
+const tzSel = document.getElementById('tzSelect');
+const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// Populate select
+const hasMatch = TIMEZONES.find(t => t.v === detectedTz);
+if (!hasMatch) {
+  const o = document.createElement('option');
+  o.value = detectedTz; o.textContent = detectedTz.replace(/_/g,' ') + ' (auto-detected)';
+  tzSel.appendChild(o);
+}
+TIMEZONES.forEach(t => {
+  const o = document.createElement('option');
+  o.value = t.v; o.textContent = t.l;
+  tzSel.appendChild(o);
+});
+tzSel.value = detectedTz;
+
+tzSel.addEventListener('focus', () => { tzVerified = true; hidePulse(); });
+tzSel.addEventListener('change', () => {
+  tzVerified = true;
+  hidePulse();
+  updateBusinessHours();
+  if (selectedDate) loadSlots();
+});
+function hidePulse() {
+  document.getElementById('tzPulse').style.display = 'none';
+  document.getElementById('tzNudge').style.display = 'none';
+}
+function getTz() { return tzSel.value; }
+
+// ── Business hours note ────────────────────────────────────────────────────
+function updateBusinessHours() {
+  const tz = getTz();
+  const fmt = (utcH, utcM) => {
+    const d = new Date(Date.UTC(2026, 0, 5, utcH, utcM, 0));
+    return new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
+  };
+  const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
+    .formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value ?? '';
+  const wdStart = fmt(8, 0), wdEnd = fmt(17, 30);
+  const satStart = fmt(11, 0), satEnd = fmt(16, 30);
+  document.getElementById('calHoursText').textContent =
+    `Available Mon-Fri: ${wdStart} to ${wdEnd} ${tzAbbr} · Sat: ${satStart} to ${satEnd} ${tzAbbr}`;
+}
+updateBusinessHours();
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function getLocalDayRange(dateStr, timezone) {
+  const [yr, mo, dy] = dateStr.split('-').map(Number);
+  const refNoon = new Date(Date.UTC(yr, mo - 1, dy, 12, 0, 0));
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  }).formatToParts(refNoon);
+  const g = t => parseInt(parts.find(p => p.type === t)?.value ?? '0');
+  const tzHr = g('hour') === 24 ? 0 : g('hour');
+  const offsetMs = refNoon.getTime() - Date.UTC(g('year'), g('month') - 1, g('day'), tzHr, g('minute'), g('second'));
+  const start = new Date(Date.UTC(yr, mo - 1, dy, 0, 0, 0) + offsetMs);
+  const end   = new Date(start.getTime() + 24 * 60 * 60 * 1000 - 1);
+  return { dayStartUTC: start.toISOString(), dayEndUTC: end.toISOString() };
+}
+
+function formatTime(iso, tz) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(iso));
+}
+
+function formatDate(d, tz) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: tz || 'UTC', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  }).format(d instanceof Date ? d : new Date(d));
+}
+
+function formatDateShort(d) {
+  return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d);
+}
+
+function dateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ── Calendar ───────────────────────────────────────────────────────────────
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const calGrid = document.getElementById('calGrid');
+const calDow  = document.getElementById('calDow');
+const calMonth = document.getElementById('calMonthLabel');
+
+// Min: tomorrow; Max: ~4 weeks out
+const today  = new Date(); today.setHours(0,0,0,0);
+const minDate = new Date(today); minDate.setDate(today.getDate() + 1);
+const maxDate = new Date(today); maxDate.setDate(today.getDate() + 28);
+
+let calYear  = minDate.getFullYear();
+let calMo    = minDate.getMonth();
+
+// Render day-of-week header
+DAYS.forEach(d => {
+  const c = document.createElement('div');
+  c.className = 'cal-dow-cell'; c.textContent = d;
+  calDow.appendChild(c);
+});
+
+function renderCalendar() {
+  calMonth.textContent = `${MONTHS[calMo]} ${calYear}`;
+  calGrid.innerHTML = '';
+
+  const first = new Date(calYear, calMo, 1);
+  const last  = new Date(calYear, calMo + 1, 0);
+  const startDow = first.getDay(); // 0=Sun
+
+  // Empty cells before first day
+  for (let i = 0; i < startDow; i++) {
+    const el = document.createElement('div'); el.className = 'cal-day empty'; calGrid.appendChild(el);
+  }
+  // Day cells
+  for (let d = 1; d <= last.getDate(); d++) {
+    const dt = new Date(calYear, calMo, d);
+    const el = document.createElement('div');
+    el.textContent = d;
+    let cls = 'cal-day';
+    const isToday     = dt.toDateString() === today.toDateString();
+    const isDisabled  = dt < minDate || dt > maxDate;
+    const isSelected  = selectedDate && dt.toDateString() === selectedDate.toDateString();
+    if (isToday)    cls += ' today';
+    if (isDisabled) cls += ' disabled';
+    if (isSelected) cls += ' selected';
+    el.className = cls;
+    if (!isDisabled) {
+      el.addEventListener('click', () => { selectedDate = dt; goToStep(2); });
+    }
+    calGrid.appendChild(el);
+  }
+  // Prev/next nav states
+  const prevMo = new Date(calYear, calMo, 1);
+  document.getElementById('calPrev').disabled = prevMo <= new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  const nextMo = new Date(calYear, calMo + 2, 0);
+  document.getElementById('calNext').disabled = nextMo > maxDate;
+}
+
+document.getElementById('calPrev').addEventListener('click', () => {
+  calMo--; if (calMo < 0) { calMo = 11; calYear--; }
+  renderCalendar();
+});
+document.getElementById('calNext').addEventListener('click', () => {
+  calMo++; if (calMo > 11) { calMo = 0; calYear++; }
+  renderCalendar();
+});
+renderCalendar();
+
+// ── Slot loading ───────────────────────────────────────────────────────────
+async function loadSlots() {
+  const container = document.getElementById('slotsContainer');
+  const tz = getTz();
+  const ds = dateStr(selectedDate);
+
+  // Update date label
+  document.getElementById('slotDateLabel').textContent = formatDate(selectedDate, tz);
+
+  container.innerHTML = `<div class="slots-loading"><div class="spinner"></div>Loading available times...</div>`;
+
+  const { dayStartUTC, dayEndUTC } = getLocalDayRange(ds, tz);
+  const { data, error } = await sb.functions.invoke('get-slots', { body: { dayStartUTC, dayEndUTC } });
+
+  if (error) {
+    container.innerHTML = `<div class="slots-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      <p>Could not load available times.</p><small>Please try again or pick another date.</small></div>`;
+    return;
+  }
+
+  slots = data?.slots ?? [];
+  selectedSlot = null;
+
+  if (!slots.length) {
+    container.innerHTML = `<div class="slots-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <p>No slots available on this day.</p><small>Pick a different date.</small>
+      <br/><button onclick="goToStep(1)" style="margin-top:16px;padding:10px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-size:14px;cursor:pointer;">Choose another date</button></div>`;
+    return;
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'slots-grid';
+  slots.forEach(slot => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'slot-btn';
+    btn.textContent = formatTime(slot, tz);
+    btn.addEventListener('click', () => {
+      selectedSlot = slot;
+      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      setTimeout(() => goToStep(3), 180);
+    });
+    grid.appendChild(btn);
+  });
+  container.innerHTML = '';
+  container.appendChild(grid);
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function goToStep(n) {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('step'+i).hidden = (i !== n);
+  });
+  updateStepIndicator(n);
+  currentStep = n;
+  if (n === 2) loadSlots();
+  if (n === 3) updateSlotLabel();
+  if (n === 4) { document.getElementById('trustBadges').style.display = 'none'; }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepIndicator(n) {
+  for (let i = 1; i <= 3; i++) {
+    const sc = document.getElementById('sc'+i);
+    const sl = document.getElementById('sl'+i);
+    sc.className = 'step-circle ' + (i < n ? 'done' : i === n ? 'active' : '');
+    sl.className = 'step-label ' + (i < n ? 'done' : i === n ? 'active' : '');
+    if (i < n) {
+      sc.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else {
+      sc.textContent = i;
+    }
+    if (i < 3) {
+      document.getElementById('conn'+i).className = 'step-connector ' + (i < n ? 'done' : '');
+    }
+  }
+}
+
+function updateSlotLabel() {
+  if (selectedDate && selectedSlot) {
+    const tz = getTz();
+    document.getElementById('selectedSlotLabel').textContent =
+      `${formatDate(selectedDate, tz)} at ${formatTime(selectedSlot, tz)}`;
+  }
+}
+
+document.getElementById('backTo1').addEventListener('click', () => goToStep(1));
+document.getElementById('backTo2').addEventListener('click', () => goToStep(2));
+
+// ── Form validation ────────────────────────────────────────────────────────
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setErr(id, show, msg) {
+  const el = document.getElementById('err-'+id);
+  el.hidden = !show;
+  if (msg && el.querySelector('span')) el.querySelector('span').textContent = msg;
+  const inp = document.getElementById('f'+id);
+  if (inp) inp.classList.toggle('error', show);
+}
+
+function validate() {
+  let ok = true;
+  const name  = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  if (!name)             { setErr('name', true); ok = false; } else setErr('name', false);
+  if (!emailRe.test(email)){ setErr('email', true); ok = false; } else setErr('email', false);
+  if (phone) {
+    const digits = phone.replace(/\D/g,'');
+    if (digits.length < 6 || digits.length > 15) { setErr('phone', true); ok = false; }
+    else setErr('phone', false);
+  } else setErr('phone', false);
+  return ok;
+}
+
+// ── Guest management ───────────────────────────────────────────────────────
+function renderGuests() {
+  const c = document.getElementById('guestChips'); c.innerHTML = '';
+  guestEmails.forEach(g => {
+    const chip = document.createElement('div'); chip.className = 'guest-chip';
+    chip.innerHTML = `${g}<button type="button" class="guest-chip-remove" aria-label="Remove ${g}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+    chip.querySelector('.guest-chip-remove').addEventListener('click', () => {
+      guestEmails = guestEmails.filter(x => x !== g); renderGuests();
+    });
+    c.appendChild(chip);
+  });
+  document.getElementById('guestAddBtn').disabled = guestEmails.length >= 5;
+}
+
+function addGuest() {
+  const inp = document.getElementById('fguest');
+  const g = inp.value.trim().toLowerCase();
+  const errEl = document.getElementById('err-guest');
+  const msgEl = document.getElementById('err-guest-msg');
+  if (!emailRe.test(g)) { errEl.hidden = false; msgEl.textContent = 'Enter a valid email address.'; return; }
+  if (g === document.getElementById('femail').value.trim().toLowerCase()) { errEl.hidden = false; msgEl.textContent = 'This is the same as your own email.'; return; }
+  if (guestEmails.includes(g)) { errEl.hidden = false; msgEl.textContent = 'Already added.'; return; }
+  if (guestEmails.length >= 5) { errEl.hidden = false; msgEl.textContent = 'Maximum 5 guests.'; return; }
+  errEl.hidden = true;
+  guestEmails.push(g);
+  inp.value = '';
+  renderGuests();
+}
+
+document.getElementById('guestAddBtn').addEventListener('click', addGuest);
+document.getElementById('fguest').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addGuest(); } });
+
+// ── Form submit ────────────────────────────────────────────────────────────
+document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!validate() || !selectedSlot) return;
+
+  const btn    = document.getElementById('submitBtn');
+  const label  = document.getElementById('submitLabel');
+  const arrow  = document.getElementById('submitArrow');
+  const spinner = document.getElementById('submitSpinner');
+
+  btn.disabled = true;
+  label.textContent = 'Booking your call...';
+  arrow.style.display = 'none';
+  spinner.style.display = 'block';
+
+  const payload = {
+    name:            document.getElementById('fname').value.trim(),
+    email:           document.getElementById('femail').value.trim().toLowerCase(),
+    company:         document.getElementById('fcompany').value.trim() || undefined,
+    notes:           document.getElementById('fnotes').value.trim() || undefined,
+    phone:           document.getElementById('fphone').value.trim() || undefined,
+    scheduledAt:     selectedSlot,
+    visitorTimezone: getTz(),
+    guestEmails:     guestEmails.length ? guestEmails : undefined,
+  };
+
+  try {
+    const { data, error } = await sb.functions.invoke('create-booking', { body: payload });
+
+    if (error || !data?.success) {
+      const msg = data?.error || 'Booking failed. Please try again.';
+      // Slot conflict: refresh slots and go back to step 2
+      if (msg.includes('just taken') || msg.includes('slot')) {
+        selectedSlot = null;
+        await loadSlots();
+        goToStep(2);
+        alert('That slot was just taken. Please pick another time.');
+      } else {
+        alert(msg);
+      }
+      return;
+    }
+
+    showConfirmation(payload);
+
+  } catch (err) {
+    console.error(err);
+    alert('An unexpected error occurred. Please try again.');
+  } finally {
+    btn.disabled = false;
+    label.textContent = 'Confirm Booking';
+    arrow.style.display = '';
+    spinner.style.display = 'none';
+  }
+});
+
+// ── Show confirmation ──────────────────────────────────────────────────────
+function showConfirmation(payload) {
+  document.getElementById('confirmEmail').textContent = payload.email;
+
+  if (guestEmails.length) {
+    const el = document.getElementById('confirmGuests');
+    el.hidden = false;
+    el.textContent = 'Invites also sent to: ' + guestEmails.join(', ');
+  }
+
+  const tz = getTz();
+  const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
+    .formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value ?? '';
+
+  document.getElementById('confirmDetail').innerHTML = `
+    <div class="confirm-detail-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <strong>${formatDate(selectedDate, tz)}</strong>
+    </div>
+    <div class="confirm-detail-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>${formatTime(selectedSlot, tz)} &nbsp;·&nbsp; 15 min &nbsp;·&nbsp; ${tz.replace(/_/g,' ')} (${tzAbbr})</span>
+    </div>`;
+
+  goToStep(4);
+}
+
+// ── Reset form ─────────────────────────────────────────────────────────────
+document.getElementById('bookAnotherBtn').addEventListener('click', () => {
+  selectedDate = null;
+  selectedSlot = null;
+  slots = [];
+  guestEmails = [];
+  document.getElementById('bookingForm').reset();
+  document.getElementById('guestChips').innerHTML = '';
+  document.getElementById('confirmGuests').hidden = true;
+  document.getElementById('trustBadges').style.display = '';
+  renderCalendar();
+  goToStep(1);
+});
+
+// ── Scroll progress ────────────────────────────────────────────────────────
+const prog = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  prog.style.setProperty('--p', (h.scrollHeight - h.clientHeight > 0
+    ? (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 : 0) + '%');
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 8);
+}, { passive: true });
+</script>
+</body>
+</html>
