@@ -115,7 +115,7 @@ export default function Hero() {
             className="flex gap-3.5 flex-wrap mb-9"
           >
             <Link
-              to="/book"
+              to="/book?session=fit"
               className="magnetic inline-flex items-center gap-2 px-7 py-[18px] rounded-full bg-blue text-white text-base font-semibold shadow-[0_6px_18px_-8px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-14px_rgba(37,99,235,0.8)] hover:bg-[#1d57db] transition-all duration-200"
             >
               Book a 15-min fit call

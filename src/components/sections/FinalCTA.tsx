@@ -40,7 +40,7 @@ export default function FinalCTA() {
           transition={{ duration: 0.65, delay: 0.18 }}
         >
           <Link
-            to="/book"
+            to="/book?session=fit"
             className="inline-flex items-center gap-2 px-9 py-[22px] rounded-full bg-blue text-white text-[17px] font-semibold shadow-[0_8px_24px_-10px_rgba(37,99,235,0.65)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-14px_rgba(37,99,235,0.8)] hover:bg-[#1d57db] transition-all duration-200"
           >
             Book a 15-min fit call

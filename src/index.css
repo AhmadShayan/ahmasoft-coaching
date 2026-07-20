@@ -136,26 +136,165 @@
     pointer-events: none;
   }
 
-  /* Calendar day styles for react-day-picker dark theme */
-  .rdp {
-    --rdp-cell-size: 42px;
-    --rdp-caption-font-size: 1.1rem;
+  /* ── Form inputs — dark glass ── */
+  .form-input {
+    width: 100%;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(248, 250, 252, 0.92);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  .form-input::placeholder {
+    color: rgba(248, 250, 252, 0.2);
+  }
+  .form-input:focus {
+    border-color: rgba(37, 99, 235, 0.55);
+    background: rgba(37, 99, 235, 0.04);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  .form-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .form-input.border-red-500\/60:focus {
+    border-color: rgba(239, 68, 68, 0.55);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+  textarea.form-input {
+    resize: none;
+    min-height: 96px;
+  }
+
+  /* ── react-day-picker — .rdp-coaching scoped theme ── */
+  .rdp-coaching {
+    --rdp-cell-size: 44px;
+    --rdp-caption-font-size: 1.15rem;
     --rdp-accent-color: #2563EB;
     --rdp-background-color: rgba(37,99,235,0.18);
     --rdp-accent-color-dark: #1d57db;
     --rdp-outline: 2px solid #2563EB;
-    margin: 0;
+    margin: 0 auto;
   }
-  .rdp-day { border-radius: 10px; color: rgba(248,250,252,0.8); }
-  .rdp-day:hover:not([disabled]) { background: rgba(37,99,235,0.18); color: #fff; }
-  .rdp-day_selected { background: #2563EB !important; color: #fff !important; }
-  .rdp-day_today:not(.rdp-day_selected) { border: 1px solid rgba(37,99,235,0.5); color: #60a5fa; }
-  .rdp-day_disabled { opacity: 0.25; cursor: not-allowed; }
-  .rdp-head_cell { color: rgba(248,250,252,0.4); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-  .rdp-caption_label { color: #fff; font-family: "Fraunces", serif; font-size: 1.15rem; font-weight: 500; }
-  .rdp-nav_button { color: rgba(255,255,255,0.7); border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
-  .rdp-nav_button:hover { background: rgba(37,99,235,0.15); border-color: rgba(37,99,235,0.4); color: #fff; }
-  .rdp-table { border-collapse: separate; border-spacing: 4px; }
+
+  /* Month header */
+  .rdp-coaching .rdp-caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2px 16px;
+    position: relative;
+  }
+  .rdp-coaching .rdp-caption_label {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #F8FAFC;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  /* Nav buttons (prev / next month) */
+  .rdp-coaching .rdp-nav {
+    display: flex;
+    gap: 6px;
+  }
+  .rdp-coaching .rdp-nav_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.65);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .rdp-coaching .rdp-nav_button:hover {
+    background: rgba(37,99,235,0.16);
+    border-color: rgba(37,99,235,0.45);
+    color: #fff;
+  }
+  .rdp-coaching .rdp-nav_button svg { width: 16px; height: 16px; }
+
+  /* Weekday header row */
+  .rdp-coaching .rdp-head_cell {
+    width: var(--rdp-cell-size);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(248,250,252,0.28);
+    padding-bottom: 10px;
+    text-align: center;
+  }
+
+  /* Table layout */
+  .rdp-coaching .rdp-table {
+    border-collapse: separate;
+    border-spacing: 3px;
+  }
+  .rdp-coaching .rdp-cell {
+    padding: 0;
+    text-align: center;
+  }
+
+  /* Day buttons */
+  .rdp-coaching .rdp-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--rdp-cell-size);
+    height: var(--rdp-cell-size);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.78);
+    background: transparent;
+    border: 1px solid transparent;
+    transition: background 0.14s, border-color 0.14s, color 0.14s, box-shadow 0.14s;
+  }
+  .rdp-coaching .rdp-day:not([disabled]):not(.rdp-day_selected):hover {
+    background: rgba(37,99,235,0.18);
+    border-color: rgba(37,99,235,0.38);
+    color: #fff;
+  }
+
+  /* Selected day */
+  .rdp-coaching .rdp-day_selected {
+    background: #2563EB !important;
+    border-color: #2563EB !important;
+    color: #fff !important;
+    box-shadow: 0 4px 18px -4px rgba(37,99,235,0.65);
+    font-weight: 600;
+  }
+
+  /* Today (not selected) */
+  .rdp-coaching .rdp-day_today:not(.rdp-day_selected) {
+    border-color: rgba(37,99,235,0.55);
+    color: #60a5fa;
+    font-weight: 600;
+  }
+
+  /* Disabled days */
+  .rdp-coaching .rdp-day_disabled {
+    opacity: 0.18;
+    cursor: not-allowed;
+  }
+  .rdp-coaching .rdp-day_disabled:hover {
+    background: transparent !important;
+    border-color: transparent !important;
+  }
+
+  /* Outside-month days (shown faded) */
+  .rdp-coaching .rdp-day_outside {
+    opacity: 0.22;
+  }
 }
 
 @keyframes gradPan {
