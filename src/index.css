@@ -136,7 +136,7 @@
     pointer-events: none;
   }
 
-  /* ── Form inputs — dark glass ── */
+  /* ── Form inputs, dark glass ── */
   .form-input {
     width: 100%;
     border-radius: 12px;
@@ -170,7 +170,7 @@
     min-height: 96px;
   }
 
-  /* ── react-day-picker — .rdp-coaching scoped theme ── */
+  /* ── react-day-picker, .rdp-coaching scoped theme ── */
   .rdp-coaching {
     --rdp-cell-size: 44px;
     --rdp-caption-font-size: 1.15rem;

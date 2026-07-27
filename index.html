@@ -4,11 +4,177 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/assets/ahmasoft-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ahmad Shayan · Claude Code Coaching</title>
-    <meta name="description" content="From zero to shipped. I coach non-technical operators to build AI tools with Claude Code. One or two live sessions. $250." />
+    <title>Claude Code Coaching by Ahmad Shayan | Ship Your First AI Tool</title>
+    <meta
+      name="description"
+      content="From zero to shipped. Ahmad Shayan coaches non-technical operators to build real AI tools with Claude Code. One or two live sessions, $250 flat, full refund if nothing ships."
+    />
+    <meta name="author" content="Ahmad Shayan" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="theme-color" content="#07100b" />
+
+    <link rel="canonical" href="https://coach.ahmasoft.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="Ahmasoft Coaching" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://coach.ahmasoft.com/" />
+    <meta property="og:title" content="Claude Code Coaching by Ahmad Shayan | Ship Your First AI Tool" />
+    <meta
+      property="og:description"
+      content="Ahmad Shayan coaches non-technical operators to build real AI tools with Claude Code. One or two live sessions, $250 flat, full refund if nothing ships."
+    />
+    <meta property="og:image" content="https://coach.ahmasoft.com/assets/ahmad-shayan.jpg" />
+    <meta property="og:image:alt" content="Ahmad Shayan, Claude Code coach and founder of Ahmasoft" />
+
+    <!-- Twitter. No twitter:site or twitter:creator on purpose: Ahmad does not
+         own a handle, and crediting someone else's is worse than omitting it. -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Claude Code Coaching by Ahmad Shayan | Ship Your First AI Tool" />
+    <meta
+      name="twitter:description"
+      content="Ship your first AI tool in one or two live sessions. $250 flat, full refund if nothing ships."
+    />
+    <meta name="twitter:image" content="https://coach.ahmasoft.com/assets/ahmad-shayan.jpg" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Entity graph.
+         The Person @id "https://ahmadshayan.com/#ahmad-shayan" is the canonical
+         identifier used on ahmadshayan.com and ahmasoft.com too. All three
+         properties must reference this exact string, or search engines resolve
+         several weakly-linked people instead of one well-attested entity, which
+         is what kept Ahmad off page one for his own name. Do not re-point it. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://ahmadshayan.com/#ahmad-shayan",
+          "name": "Ahmad Shayan",
+          "url": "https://ahmadshayan.com/about",
+          "jobTitle": "Founder & CEO",
+          "description": "Ahmad Shayan is the Founder and CEO of Ahmasoft, an AI software company based in Lahore, Pakistan. He builds production AI systems for companies and coaches non-technical leaders to build their own with Claude Code.",
+          "image": "https://coach.ahmasoft.com/assets/ahmad-shayan.jpg",
+          "worksFor": { "@id": "https://www.ahmasoft.com/#ahmasoft" },
+          "knowsAbout": [
+            "Claude Code",
+            "Claude Code Coaching",
+            "AI Software Development",
+            "AI Agents",
+            "Workflow Automation"
+          ],
+          "sameAs": [
+            "https://www.linkedin.com/in/ehmadshayan/",
+            "https://github.com/AhmadShayan",
+            "https://www.upwork.com/freelancers/ehmadshayan",
+            "https://www.instagram.com/the.ahmadshayan/",
+            "https://ahmadshayan.com/"
+          ]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://www.ahmasoft.com/#ahmasoft",
+          "name": "Ahmasoft",
+          "url": "https://www.ahmasoft.com",
+          "foundingDate": "2025-02",
+          "founder": { "@id": "https://ahmadshayan.com/#ahmad-shayan" },
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Lahore",
+            "addressCountry": "PK"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://coach.ahmasoft.com/#website",
+          "url": "https://coach.ahmasoft.com",
+          "name": "Ahmasoft Coaching",
+          "inLanguage": "en-US",
+          "publisher": { "@id": "https://ahmadshayan.com/#ahmad-shayan" }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://coach.ahmasoft.com/#builder-sprint",
+          "name": "Claude Code Builder Sprint",
+          "serviceType": "1-on-1 AI software coaching",
+          "description": "Private 1-on-1 coaching that takes a non-technical operator from zero to a deployed AI tool, usually in one or two live sessions.",
+          "provider": { "@id": "https://ahmadshayan.com/#ahmad-shayan" },
+          "areaServed": "Worldwide",
+          "offers": {
+            "@type": "Offer",
+            "price": "250",
+            "priceCurrency": "USD",
+            "description": "Flat fee for the Builder Sprint. Full refund if no working AI tool is deployed by the end.",
+            "url": "https://coach.ahmasoft.com/book"
+          },
+          "availableChannel": {
+            "@type": "ServiceChannel",
+            "serviceUrl": "https://coach.ahmasoft.com/book",
+            "availableLanguage": "English"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://coach.ahmasoft.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Do I need to be technical?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Most clients are VPs and directors with no coding background. Setup is point-and-click. Building is conversational. You prompt, Claude codes."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How long does the Sprint take?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Most clients finish in two sessions of about 90 minutes each. Technical clients often do two sessions of an hour each. Some prefer one longer sitting. We pace to fit you, not a fixed clock."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What if I do not know what I want to build?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "That is what the first 10 minutes are for. Clients arrive with a vague idea and leave with a concrete plan."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Will I need to pay for Claude API?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, but it is small. Plan on $5 to $15 a month as you build. Cost controls are covered in Session 1."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What happens after the Sprint?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You leave with everything working and a recall doc as your reference. About 70% of clients come back for ongoing coaching at $50/hr. The rest take it from there on their own."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the refund policy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "If you do not have a working AI tool deployed by the end of your Sprint, the full $250 is refunded. No forms, no friction."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

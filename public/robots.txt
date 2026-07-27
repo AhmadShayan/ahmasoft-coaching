@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# AI crawlers, allowed deliberately. Blocking these means the assistant can
+# never cite this site, and coaching is the line where being cited matters most.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://coach.ahmasoft.com/sitemap.xml
+
+# This site is JavaScript-rendered, so crawlers that do not execute JS receive an
+# empty page body. /llms.txt carries the same content as plain text.

@@ -19,7 +19,7 @@ interface FormData { name: string; email: string; company: string; notes: string
 
 // ── Session modes ────────────────────────────────────────────────────────────
 // Three pre-set call types. URL param `?session=fit|standard|deep` selects one.
-// Default is "standard" (90 min) — the standard Builder Sprint session length.
+// Default is "standard" (90 min), the standard Builder Sprint session length.
 interface SessionConfig {
   key:          SessionMode;
   durationMin:  number;
@@ -373,7 +373,7 @@ export default function BookPage() {
       .finally(() => setLoadingSlots(false));
   }, [selectedDate, selectedTz, session.durationMin]);
 
-  // Compute "ends at" label for the selected slot — e.g. "01:00 PM → 02:30 PM"
+  // Compute "ends at" label for the selected slot, e.g. "01:00 PM → 02:30 PM"
   const slotEndLabel = useMemo(() => {
     if (!selectedSlot) return "";
     const end = new Date(new Date(selectedSlot).getTime() + session.durationMin * 60 * 1000);
