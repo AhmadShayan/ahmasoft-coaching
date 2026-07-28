@@ -29,7 +29,13 @@ export default function Nav() {
         )}
       >
         <div className="max-w-[1180px] mx-auto flex items-center justify-between gap-6">
-          <Link to="/" className="flex items-center gap-3.5 group" aria-label="Ahmad Shayan home">
+          {/* No aria-label on purpose. It read "Ahmad Shayan home" while the visible
+              text is "Ahmad Shayan / Claude Code Coaching", which fails WCAG 2.5.3
+              (Label in Name): a voice-control user saying what they can see could not
+              activate the link. Letting the visible text be the accessible name fixes
+              that, and it also makes the anchor text "Ahmad Shayan Claude Code
+              Coaching" instead of nothing, which is the better name signal anyway. */}
+          <Link to="/" className="flex items-center gap-3.5 group">
             <span
               className={cn(
                 "w-[42px] h-[42px] rounded-[11px] grid place-items:center overflow-hidden",

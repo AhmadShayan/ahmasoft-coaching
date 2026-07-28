@@ -18,7 +18,9 @@ export default function Footer() {
         </a>
       </div>
       <div>Ahmad Shayan &nbsp;·&nbsp; Ahmasoft &nbsp;·&nbsp; Claude Code Coaching</div>
-      <div className="text-white/30 mt-1">&copy; 2026 Ahmasoft</div>
+      {/* white/30 measured 2.7:1 against this footer background, under the 4.5
+          minimum. white/55 clears it and still reads as secondary. */}
+      <div className="text-white/55 mt-1">&copy; 2026 Ahmasoft</div>
     </footer>
   );
 }
